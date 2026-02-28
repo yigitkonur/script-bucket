@@ -1,0 +1,54 @@
+{
+  "version": 1,
+  "updated": "2026-02-28T10:48:23.047Z",
+  "scripts": {
+    "yts": {
+      "name": "yts",
+      "description": "Search YouTube videos via Apify and return results as TSV",
+      "args": [
+        {
+          "name": "query",
+          "type": "string",
+          "description": "Search query (e.g. 'nodejs tutorial')",
+          "required": true
+        },
+        {
+          "name": "maxResults",
+          "type": "number",
+          "description": "Maximum number of results to return",
+          "required": false,
+          "default": "10"
+        }
+      ],
+      "deps": [
+        "jq",
+        "apify"
+      ],
+      "envs": [
+        "APIFY_TOKEN"
+      ],
+      "output": "tsv",
+      "header": [
+        "VideoID",
+        "Title",
+        "Description",
+        "ChannelID"
+      ],
+      "category": "youtube",
+      "tags": [
+        "scraping",
+        "apify",
+        "video"
+      ],
+      "author": "yigitkonur",
+      "platform": "all",
+      "examples": [
+        "scriptix yts \"react hooks tutorial\" 20",
+        "scriptix yts \"kubernetes explained\"",
+        "scriptix yts \"nodejs\" 5 --json"
+      ],
+      "path": "scripts/youtube/yts.sh",
+      "version": "1.0.0"
+    }
+  }
+}

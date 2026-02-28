@@ -1,0 +1,40 @@
+name: Build Manifest
+
+on:
+  push:
+    branches: [main]
+    paths: ['scripts/**']
+  pull_request:
+    paths: ['scripts/**']
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Build manifest
+        run: node tools/build-manifest.js
+
+      - name: Validate manifest
+        run: |
+          if ! jq empty manifest.json 2>/dev/null; then
+            echo "Error: manifest.json is not valid JSON"
+            exit 1
+          fi
+          echo "Manifest is valid JSON"
+          SCRIPT_COUNT=$(jq '.scripts | length' manifest.json)
+          echo "Scripts in manifest: $SCRIPT_COUNT"
+
+      - name: Commit manifest (push only)
+        if: github.event_name == 'push'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add manifest.json
+          git diff --staged --quiet || git commit -m "chore: rebuild manifest.json [skip ci]"
+          git push
